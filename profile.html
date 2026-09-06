@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDo — Profile</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span>&gt;_</span> CodeDo<span class="caret"></span></div>
+  <div class="nav">
+    <a href="index.html">Browse</a>
+    <a href="people.html" class="icon-btn" title="Search people">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+    </a>
+    <a href="chat.html" class="icon-btn" title="Chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.35 0-2.61-.32-3.73-.88L3 21l1.88-5.77A8.5 8.5 0 1 1 21 11.5z"></path></svg>
+    </a>
+    <button class="btn" id="editProfileBtn" style="display:none">Edit profile</button>
+    <button class="btn ghost" id="loginBtn">Sign in with Google</button>
+    <div id="userBox" style="display:none;align-items:center;gap:8px"></div>
+  </div>
+</div>
+
+<div class="container" style="max-width:760px">
+  <div class="card" id="profileCard" style="display:none;margin-bottom:24px">
+    <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+      <img id="p_photo" src="" style="width:76px;height:76px;border-radius:50%;border:2px solid var(--border-strong)">
+      <div style="flex:1;min-width:200px">
+        <h2 id="p_name" style="margin:0 0 2px;color:var(--white)"></h2>
+        <div id="p_username" style="color:var(--muted);font-size:13px;margin-bottom:10px"></div>
+        <div style="display:flex;gap:20px;font-size:13px">
+          <div><b id="p_synced_count">0</b> <span style="color:var(--muted)">Synced</span></div>
+          <div><b id="p_locals_count">0</b> <span style="color:var(--muted)">Locals</span></div>
+        </div>
+      </div>
+      <button class="btn" id="followBtn" style="display:none">Follow</button>
+    </div>
+  </div>
+
+  <p class="section-title">Uploaded code</p>
+  <div class="grid" id="profileSnippets"></div>
+</div>
+
+<!-- Edit profile modal -->
+<div class="overlay" id="editModal">
+  <div class="modal">
+    <span class="close-x" id="closeEdit">&times;</span>
+    <h2>Edit profile</h2>
+    <form id="editForm">
+      <div class="field">
+        <label>Display name</label>
+        <input id="e_name" type="text" required>
+      </div>
+      <div class="field">
+        <label>Username</label>
+        <input id="e_username" type="text" placeholder="username" required>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" onclick="document.getElementById('editModal').classList.remove('show')">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/profile.js"></script>
+</body>
+</html>

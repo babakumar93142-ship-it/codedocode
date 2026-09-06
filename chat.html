@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDo — Friends & Chat</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span>&gt;_</span> CodeDo<span class="caret"></span></div>
+  <div class="nav">
+    <a href="index.html">Browse</a>
+    <a href="people.html" class="icon-btn" title="Search people">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+    </a>
+    <div id="userBox" style="display:none;align-items:center;gap:8px"></div>
+  </div>
+</div>
+
+<div class="container" id="gate" style="display:none;text-align:center;padding-top:80px">
+  <p class="section-title">Sign in to chat with friends</p>
+  <button class="btn" id="gateBtn">Sign in with Google</button>
+</div>
+
+<div class="container">
+  <div class="toolbar">
+    <input id="friendSearch" type="text" placeholder="Search by email and press Enter to add friend...">
+  </div>
+  <div id="searchResults" style="margin-bottom:16px"></div>
+  <div id="requestsBox" style="margin-bottom:16px"></div>
+
+  <div class="chat-wrap" id="chatWrap" style="display:none">
+    <div class="friend-list" id="friendList"></div>
+    <div class="chat-panel">
+      <div style="padding:12px;border-bottom:1px solid var(--border);color:var(--green)" id="chatHeader">
+        Select a friend
+      </div>
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="reply-bar" id="replyBar" style="display:none">
+        <span class="reply-bar-text" id="replyBarText"></span>
+        <button class="close-x" id="cancelReplyBtn">&times;</button>
+      </div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="Type a message..." disabled>
+        <button class="btn" id="sendBtn" disabled>Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/chat.js"></script>
+</body>
+</html>

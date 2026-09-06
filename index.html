@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDo — learn to code, out loud</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span>&gt;_</span> CodeDo<span class="caret"></span></div>
+  <div class="nav">
+    <a href="index.html">Browse</a>
+    <a href="people.html" class="icon-btn" title="Search people">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+    </a>
+    <a href="chat.html" class="icon-btn" title="Chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.35 0-2.61-.32-3.73-.88L3 21l1.88-5.77A8.5 8.5 0 1 1 21 11.5z"></path></svg>
+    </a>
+    <button class="btn" id="uploadBtn" style="display:none">Upload code</button>
+    <button class="btn" id="loginBtn">Sign in with Google</button>
+    <div id="userBox" style="display:none;align-items:center;gap:8px"></div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1><span>CodeDo</span></h1>
+</div>
+
+<div class="container">
+  <div class="toolbar">
+    <input id="searchInput" type="text" placeholder="Search by title, description or author...">
+    <select id="langFilter">
+      <option value="all">All languages</option>
+      <option value="C">C</option>
+      <option value="C++">C++</option>
+      <option value="C#">C#</option>
+      <option value="Java">Java</option>
+      <option value="Python">Python</option>
+      <option value="HTML">HTML</option>
+      <option value="CSS">CSS</option>
+      <option value="JavaScript">JavaScript</option>
+      <option value="PHP">PHP</option>
+      <option value="Kotlin">Kotlin</option>
+      <option value="Swift">Swift</option>
+      <option value="Dart">Dart</option>
+      <option value="SQL">SQL</option>
+      <option value="Go">Go</option>
+      <option value="Rust">Rust</option>
+    </select>
+  </div>
+
+  <div class="grid" id="snippetGrid">
+    <div class="empty">Loading code...</div>
+  </div>
+</div>
+
+<footer>CodeDo — built for people learning to code, one snippet at a time.</footer>
+
+<!-- Upload modal -->
+<div class="overlay" id="uploadModal">
+  <div class="modal">
+    <span class="close-x" id="closeUpload">&times;</span>
+    <h2>Upload your code</h2>
+    <form id="uploadForm">
+      <div class="field">
+        <label>Title</label>
+        <input id="f_title" type="text" placeholder="e.g. Bubble sort in C" required>
+      </div>
+      <div class="field">
+        <label>Language</label>
+        <select id="f_lang" required>
+          <option value="C">C</option>
+          <option value="C++">C++</option>
+          <option value="C#">C#</option>
+          <option value="Java">Java</option>
+          <option value="Python">Python</option>
+          <option value="HTML">HTML</option>
+          <option value="CSS">CSS</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="PHP">PHP</option>
+          <option value="Kotlin">Kotlin</option>
+          <option value="Swift">Swift</option>
+          <option value="Dart">Dart</option>
+          <option value="SQL">SQL</option>
+          <option value="Go">Go</option>
+          <option value="Rust">Rust</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Description (what this code does)</label>
+        <input id="f_desc" type="text" placeholder="Short explanation">
+      </div>
+      <div class="field">
+        <label>Code</label>
+        <textarea id="f_code" placeholder="Paste your code here..." required></textarea>
+      </div>
+      <div id="compileError" style="display:none;margin-bottom:14px"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="cancelUpload" onclick="document.getElementById('uploadModal').classList.remove('show')">Cancel</button>
+        <button type="submit" class="btn" id="publishBtn">Publish</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

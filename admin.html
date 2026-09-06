@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDo — Admin</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span>&gt;_</span> CodeDo<span class="caret"></span></div>
+  <div class="nav">
+    <a href="index.html">Back to site</a>
+  </div>
+</div>
+
+<div class="container" id="gate" style="display:none;text-align:center;padding-top:80px">
+  <p class="section-title">Admin access only</p>
+  <button class="btn" id="gateBtn">Sign in as admin</button>
+</div>
+
+<div class="container" id="panel" style="display:none">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+    <div>
+      <p class="section-title">Logged in as</p>
+      <div id="whoami" style="color:var(--green)"></div>
+    </div>
+    <button class="btn ghost" id="adminLogout">Logout</button>
+  </div>
+
+  <p class="section-title">Users</p>
+  <table style="margin-bottom:36px">
+    <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="usersBody"></tbody>
+  </table>
+
+  <p class="section-title">All uploaded code</p>
+  <table>
+    <thead><tr><th>Title</th><th>Language</th><th>Author</th><th>Actions</th></tr></thead>
+    <tbody id="snippetsBody"></tbody>
+  </table>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
