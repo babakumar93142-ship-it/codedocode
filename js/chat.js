@@ -41,22 +41,26 @@ watchAuth((user, profile) => {
   loadFriendsAndRequests();
 });
 
-// ---- search users by email to add as friend ----
+// ---- search users by username to add as friend ----
 searchInput.addEventListener("keydown", async (e) => {
   if (e.key !== "Enter") return;
-  const term = searchInput.value.trim().toLowerCase();
+  const term = searchInput.value.trim().toLowerCase().replace(/^@/, "");
   if (!term) return;
   const snap = await getDocs(collection(db, "users"));
   const matches = snap.docs
     .map(d => ({ id: d.id, ...d.data() }))
-    .filter(u => u.id !== me.uid && u.email.toLowerCase().includes(term));
+    .filter(u => u.id !== me.uid && (u.username || "").toLowerCase().includes(term));
 
   searchResults.innerHTML = matches.map(u => `
-    <div class="f-item">
-      ${u.name} <span style="color:var(--muted);font-size:11px">(${u.email})</span>
-      <button class="btn ghost" data-id="${u.id}" style="float:right;padding:3px 8px;font-size:11px">Add friend</button>
+    <div class="user-result-card">
+      <img src="${u.photo || ''}" class="user-result-avatar">
+      <div class="user-result-info">
+        <a href="profile.html?uid=${u.id}" class="user-result-name">${escapeHtml(u.name)}</a>
+        <span class="user-result-username">@${escapeHtml(u.username || "user")}</span>
+      </div>
+      <button class="btn ghost" data-id="${u.id}" style="padding:6px 14px;font-size:12px">Add friend</button>
     </div>
-  `).join("") || `<div class="empty">No user found</div>`;
+  `).join("") || `<div class="empty">Ye username nahi mila.</div>`;
 
   searchResults.querySelectorAll("button").forEach(btn => {
     btn.onclick = async () => {
