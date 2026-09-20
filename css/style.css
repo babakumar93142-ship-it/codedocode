@@ -29,10 +29,12 @@
 }
 
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;max-width:100%;overflow-x:hidden}
 
 body{
   margin:0;
+  width:100%;
+  max-width:100%;
   background:
     radial-gradient(ellipse 900px 600px at 15% -10%, rgba(124,58,237,0.35), transparent 60%),
     radial-gradient(ellipse 800px 700px at 90% 10%, rgba(192,132,252,0.22), transparent 55%),
@@ -102,18 +104,22 @@ a:hover{color:var(--purple)}
 /* ---- Top bar ---- */
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px 24px;
+  padding:14px 20px;
   position:sticky;top:0;
   background:rgba(20,12,36,0.55);
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
   border-bottom:1px solid var(--border);
   z-index:50;
+  flex-wrap:wrap;
+  gap:10px;
+  width:100%;
+  max-width:100%;
 }
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;color:var(--purple-soft)}
 .brand .caret{display:inline-block;width:10px;height:18px;background:var(--purple);border-radius:2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-.nav{display:flex;gap:18px;align-items:center}
+.nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .nav a{color:var(--muted);font-size:14px}
 .nav a:hover{color:var(--purple-soft)}
 
@@ -208,7 +214,7 @@ a:hover{color:var(--purple)}
 .hero .terminal-line::before{content:"$ "}
 
 /* ---- Layout ---- */
-.container{max-width:1100px;margin:0 auto;padding:32px 24px}
+.container{max-width:1100px;width:100%;margin:0 auto;padding:32px 24px;box-sizing:border-box}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
 .toolbar input, .toolbar select{
   background:var(--bg-panel);
@@ -386,4 +392,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:30px;border-t
   .chat-wrap{grid-template-columns:1fr;height:auto}
   .hero h1{font-size:32px}
   body::before, body::after{ width:280px; height:280px; }
+  .topbar{ justify-content:center; }
+  .brand{ width:100%; justify-content:center; margin-bottom:4px; }
+  .nav{ width:100%; justify-content:center; }
+  .toolbar{ flex-direction:column; align-items:stretch; }
+  .toolbar select{ width:100%; }
 }
