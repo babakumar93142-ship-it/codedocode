@@ -1,6 +1,7 @@
 // ===== CodeDo — snippets (browse / upload / copy) =====
 import { db, auth, watchAuth, loginWithGoogle, renderNavUser } from "./auth.js";
 import { testRunCode } from "./checker.js";
+import { openCodeFullscreen } from "./codeview.js";
 import {
   collection, addDoc, getDocs, query, orderBy, serverTimestamp, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -72,7 +73,7 @@ function renderSnippets() {
         <span class="tag">${escapeHtml(s.language)}</span>
       </div>
       <p class="desc">${escapeHtml(s.description || "")}</p>
-      <pre id="code-${s.id}">${escapeHtml(s.code)}</pre>
+      <pre id="code-${s.id}" data-id="${s.id}">${escapeHtml(s.code)}</pre>
       <div class="card-foot">
         <a href="profile.html?uid=${s.authorId}" class="author">@${escapeHtml(s.authorName || "anon")}</a>
         <button class="btn copy-btn" data-id="${s.id}">Copy</button>
@@ -81,13 +82,21 @@ function renderSnippets() {
   `).join("");
 
   document.querySelectorAll(".copy-btn").forEach(btn => {
-    btn.onclick = () => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
       const code = document.getElementById(`code-${btn.dataset.id}`).innerText;
       navigator.clipboard.writeText(code).then(() => {
         btn.textContent = "Copied ✓";
         btn.classList.add("copied");
         setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
       });
+    };
+  });
+
+  document.querySelectorAll("#snippetGrid pre").forEach(pre => {
+    pre.onclick = () => {
+      const s = allSnippets.find(s => s.id === pre.dataset.id);
+      if (s) openCodeFullscreen({ title: s.title, language: s.language, code: s.code });
     };
   });
 }
