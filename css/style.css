@@ -261,6 +261,9 @@ select option{ background:#150f24; color:#f3eefc; }
 .card-foot .author{color:var(--purple-soft)}
 
 .copy-btn{font-size:11px;padding:6px 12px}
+.folder-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.folder-actions .btn{font-size:11px;padding:6px 10px}
+.folder-card{cursor:default}
 .copy-btn.copied{color:#1a0b2e;background:var(--purple);border-color:var(--purple)}
 
 /* ---- Forms / modals ---- */
