@@ -1,6 +1,7 @@
 // ===== CodeDo — Profile page =====
 import { db, watchAuth, loginWithGoogle, renderNavUser, getUserProfile } from "./auth.js";
 import { getFollowersCount, getFollowingCount, getFollowButtonState, follow, unfollow } from "./follow.js";
+import { openCodeFullscreen } from "./codeview.js";
 import {
   collection, query, where, getDocs, doc, updateDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -76,13 +77,36 @@ async function loadProfile(uid) {
 
   const snap = await getDocs(query(collection(db, "snippets"), where("authorId", "==", uid)));
   const snippets = snap.docs.map(d => d.data());
-  profileSnippets.innerHTML = snippets.length ? snippets.map(s => `
+  profileSnippets.innerHTML = snippets.length ? snippets.map((s, idx) => `
     <div class="card">
       <div class="card-head"><h3>${escapeHtml(s.title)}</h3><span class="tag">${escapeHtml(s.language)}</span></div>
       <p class="desc">${escapeHtml(s.description || "")}</p>
-      <pre>${escapeHtml(s.code)}</pre>
+      <pre data-idx="${idx}">${escapeHtml(s.code)}</pre>
+      <div class="card-foot">
+        <span></span>
+        <button class="btn copy-btn" data-idx="${idx}">Copy</button>
+      </div>
     </div>
   `).join("") : `<div class="empty">Abhi tak koi code upload nahi kiya.</div>`;
+
+  profileSnippets.querySelectorAll(".copy-btn").forEach(btn => {
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      const code = snippets[btn.dataset.idx].code;
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = "Copied ✓";
+        btn.classList.add("copied");
+        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
+      });
+    };
+  });
+
+  profileSnippets.querySelectorAll("pre").forEach(pre => {
+    pre.onclick = () => {
+      const s = snippets[pre.dataset.idx];
+      openCodeFullscreen({ title: s.title, language: s.language, code: s.code });
+    };
+  });
 }
 
 async function refreshFollowButton(otherUid) {
