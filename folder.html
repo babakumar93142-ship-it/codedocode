@@ -1,1 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeDo — Folders</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
 
+<div class="topbar">
+  <div class="brand"><span>&gt;_</span> CodeDo<span class="caret"></span></div>
+  <div class="nav">
+    <a href="index.html">Browse</a>
+    <a href="people.html" class="icon-btn" title="Search people">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+    </a>
+    <a href="chat.html" class="icon-btn" title="Chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.35 0-2.61-.32-3.73-.88L3 21l1.88-5.77A8.5 8.5 0 1 1 21 11.5z"></path></svg>
+    </a>
+    <button class="btn ghost" id="loginBtn">Sign in with Google</button>
+    <div id="userBox" style="display:none;align-items:center;gap:8px"></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="toolbar" style="margin-bottom:14px">
+    <input id="shareCodeInput" type="text" placeholder="Have a share code? Paste it here and press Enter...">
+  </div>
+
+  <div id="breadcrumb" style="margin-bottom:18px;font-size:13px;color:var(--muted)"></div>
+
+  <div class="toolbar" id="folderToolbar" style="display:none">
+    <button class="btn" id="newFolderBtn">+ New folder</button>
+    <button class="btn ghost" id="addCodeHereBtn">+ Add code here</button>
+    <button class="btn ghost" id="pasteBtn" style="display:none">Paste</button>
+    <span id="clipboardStatus" style="color:var(--muted);font-size:12px"></span>
+  </div>
+
+  <div class="grid" id="folderGrid"></div>
+
+</div>
+
+<!-- New folder modal -->
+<div class="overlay" id="newFolderModal">
+  <div class="modal">
+    <span class="close-x" id="closeNewFolder">&times;</span>
+    <h2>New folder</h2>
+    <form id="newFolderForm">
+      <div class="field">
+        <label>Folder name</label>
+        <input id="nf_name" type="text" required>
+      </div>
+      <div class="field">
+        <label>Visibility</label>
+        <select id="nf_visibility">
+          <option value="private">Private (only you)</option>
+          <option value="public">Public (visible on your profile)</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" onclick="document.getElementById('newFolderModal').classList.remove('show')">Cancel</button>
+        <button type="submit" class="btn">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add code here modal -->
+<div class="overlay" id="addCodeModal">
+  <div class="modal">
+    <span class="close-x" id="closeAddCode">&times;</span>
+    <h2>Add code to this folder</h2>
+    <form id="addCodeForm">
+      <div class="field">
+        <label>Title</label>
+        <input id="ac_title" type="text" required>
+      </div>
+      <div class="field">
+        <label>Language</label>
+        <select id="ac_lang">
+          <option>C</option><option>C++</option><option>C#</option><option>Java</option>
+          <option>Python</option><option>HTML</option><option>CSS</option><option>JavaScript</option>
+          <option>PHP</option><option>Kotlin</option><option>Swift</option><option>Dart</option>
+          <option>SQL</option><option>Go</option><option>Rust</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <input id="ac_desc" type="text">
+      </div>
+      <div class="field">
+        <label>Code</label>
+        <textarea id="ac_code" required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" onclick="document.getElementById('addCodeModal').classList.remove('show')">Cancel</button>
+        <button type="submit" class="btn">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Move-to modal -->
+<div class="overlay" id="moveModal">
+  <div class="modal">
+    <span class="close-x" id="closeMove">&times;</span>
+    <h2>Move to folder</h2>
+    <div id="moveFolderList" style="max-height:300px;overflow:auto"></div>
+  </div>
+</div>
+
+<!-- Share modal -->
+<div class="overlay" id="shareModal">
+  <div class="modal">
+    <span class="close-x" id="closeShare">&times;</span>
+    <h2>Share this folder</h2>
+    <p style="color:var(--muted);font-size:13px">Anyone with this code can open this folder — paste it on any Folders page.</p>
+    <div class="field">
+      <input id="shareCodeOutput" type="text" readonly>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="copyShareCodeBtn">Copy code</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/folder.js"></script>
+</body>
+</html>
