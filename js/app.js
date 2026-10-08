@@ -19,6 +19,7 @@ const uploadForm = $("#uploadForm");
 let currentUser = null;
 let currentProfile = null;
 let allSnippets = [];
+let authorNames = {}; // uid -> live current name, so a name change shows everywhere instantly
 
 // ---- Auth UI ----
 watchAuth((user, profile) => {
@@ -42,9 +43,15 @@ loginBtn.onclick = async () => {
 // ---- Load snippets ----
 async function loadSnippets() {
   grid.innerHTML = `<div class="empty">Loading code...</div>`;
-  const q = query(collection(db, "snippets"), orderBy("createdAt", "desc"));
-  const snap = await getDocs(q);
-  allSnippets = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const [snippetsSnap, usersSnap] = await Promise.all([
+    getDocs(query(collection(db, "snippets"), orderBy("createdAt", "desc"))),
+    getDocs(collection(db, "users"))
+  ]);
+  allSnippets = snippetsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  authorNames = {};
+  usersSnap.docs.forEach(d => { authorNames[d.id] = d.data().name; });
+
   renderSnippets();
 }
 
@@ -53,11 +60,12 @@ function renderSnippets() {
   const lang = langFilter.value;
 
   const filtered = allSnippets.filter(s => {
+    const liveName = authorNames[s.authorId] || s.authorName || "";
     const matchesLang = lang === "all" || s.language === lang;
     const matchesTerm = !term ||
       s.title.toLowerCase().includes(term) ||
       (s.description || "").toLowerCase().includes(term) ||
-      (s.authorName || "").toLowerCase().includes(term);
+      liveName.toLowerCase().includes(term);
     return matchesLang && matchesTerm;
   });
 
@@ -66,7 +74,11 @@ function renderSnippets() {
     return;
   }
 
-  grid.innerHTML = filtered.map(s => `
+  grid.innerHTML = filtered.map(s => {
+    // Always show the author's CURRENT name (live from users collection),
+    // falling back to the old stored copy only if the user doc is missing.
+    const liveName = authorNames[s.authorId] || s.authorName || "anon";
+    return `
     <div class="card">
       <div class="card-head">
         <h3>${escapeHtml(s.title)}</h3>
@@ -75,11 +87,12 @@ function renderSnippets() {
       <p class="desc">${escapeHtml(s.description || "")}</p>
       <pre id="code-${s.id}" data-id="${s.id}">${escapeHtml(s.code)}</pre>
       <div class="card-foot">
-        <a href="profile.html?uid=${s.authorId}" class="author">@${escapeHtml(s.authorName || "anon")}</a>
+        <a href="profile.html?uid=${s.authorId}" class="author">@${escapeHtml(liveName)}</a>
         <button class="btn copy-btn" data-id="${s.id}">Copy</button>
       </div>
     </div>
-  `).join("");
+  `;
+  }).join("");
 
   document.querySelectorAll(".copy-btn").forEach(btn => {
     btn.onclick = (e) => {
