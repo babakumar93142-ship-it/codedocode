@@ -1,9 +1,8 @@
 // ===== CodeDo — Profile page =====
 import { db, watchAuth, loginWithGoogle, renderNavUser, getUserProfile } from "./auth.js";
 import { getFollowersCount, getFollowingCount, getFollowButtonState, follow, unfollow } from "./follow.js";
-import { openCodeFullscreen } from "./codeview.js";
 import {
-  collection, query, where, getDocs, doc, updateDoc, getDoc
+  collection, query, where, getDocs, doc, updateDoc, getDoc, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = (sel) => document.querySelector(sel);
@@ -77,36 +76,13 @@ async function loadProfile(uid) {
 
   const snap = await getDocs(query(collection(db, "snippets"), where("authorId", "==", uid)));
   const snippets = snap.docs.map(d => d.data());
-  profileSnippets.innerHTML = snippets.length ? snippets.map((s, idx) => `
+  profileSnippets.innerHTML = snippets.length ? snippets.map(s => `
     <div class="card">
       <div class="card-head"><h3>${escapeHtml(s.title)}</h3><span class="tag">${escapeHtml(s.language)}</span></div>
       <p class="desc">${escapeHtml(s.description || "")}</p>
-      <pre data-idx="${idx}">${escapeHtml(s.code)}</pre>
-      <div class="card-foot">
-        <span></span>
-        <button class="btn copy-btn" data-idx="${idx}">Copy</button>
-      </div>
+      <pre>${escapeHtml(s.code)}</pre>
     </div>
   `).join("") : `<div class="empty">Abhi tak koi code upload nahi kiya.</div>`;
-
-  profileSnippets.querySelectorAll(".copy-btn").forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      const code = snippets[btn.dataset.idx].code;
-      navigator.clipboard.writeText(code).then(() => {
-        btn.textContent = "Copied ✓";
-        btn.classList.add("copied");
-        setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1500);
-      });
-    };
-  });
-
-  profileSnippets.querySelectorAll("pre").forEach(pre => {
-    pre.onclick = () => {
-      const s = snippets[pre.dataset.idx];
-      openCodeFullscreen({ title: s.title, language: s.language, code: s.code });
-    };
-  });
 }
 
 async function refreshFollowButton(otherUid) {
@@ -138,7 +114,25 @@ editForm.onsubmit = async (e) => {
   const username = $("#e_username").value.trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
   if (!name || !username) return alert("Naam aur username dono zaroori hai.");
 
+  // 1. User profile update karo
   await updateDoc(doc(db, "users", me.uid), { name, username });
+
+  // 2. Is user ke saare snippets ka authorName bhi update karo (batch)
+  try {
+    const snap = await getDocs(query(
+      collection(db, "snippets"), where("authorId", "==", me.uid)
+    ));
+    if (!snap.empty) {
+      const batch = writeBatch(db);
+      snap.docs.forEach(d => {
+        batch.update(doc(db, "snippets", d.id), { authorName: name });
+      });
+      await batch.commit();
+    }
+  } catch (err) {
+    console.warn("Snippets authorName update nahi hua:", err);
+  }
+
   editModal.classList.remove("show");
   loadProfile(me.uid);
 };
