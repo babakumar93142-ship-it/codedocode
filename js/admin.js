@@ -65,14 +65,23 @@ async function loadUsers() {
 
 async function loadSnippets() {
   const q = query(collection(db, "snippets"), orderBy("createdAt", "desc"));
-  const snap = await getDocs(q);
+  const [snap, usersSnap] = await Promise.all([
+    getDocs(q),
+    getDocs(collection(db, "users"))
+  ]);
+
+  // Live uid -> current name map, so the Author column always shows the
+  // user's current display name, even if they renamed after uploading.
+  const nameMap = {};
+  usersSnap.docs.forEach(d => { nameMap[d.id] = d.data().name; });
+
   const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
   snippetsBody.innerHTML = items.map(s => `
     <tr>
       <td>${s.title}</td>
       <td>${s.language}</td>
-      <td>${s.authorName || "-"}</td>
+      <td>${nameMap[s.authorId] || s.authorName || "-"}</td>
       <td><button class="btn danger" data-id="${s.id}" style="padding:5px 10px;font-size:11px">Delete</button></td>
     </tr>
   `).join("");
