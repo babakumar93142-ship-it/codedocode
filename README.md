@@ -1,6 +1,6 @@
 <div align="center">
 
-# CodeDo
+# CodeDoCode
 
 **Share code. Learn together.**
 
