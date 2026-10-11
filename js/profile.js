@@ -14,6 +14,7 @@ const editForm = $("#editForm");
 const followBtn = $("#followBtn");
 const profileCard = $("#profileCard");
 const profileSnippets = $("#profileSnippets");
+const syncNameBtn = $("#syncNameBtn");
 
 const params = new URLSearchParams(window.location.search);
 let viewedUid = params.get("uid");
@@ -57,6 +58,15 @@ async function loadProfile(uid) {
   $("#p_photo").src = profile.photo || "";
   $("#p_name").textContent = profile.name || "User";
   $("#p_username").textContent = "@" + (profile.username || "user");
+
+  // Folders link
+  const foldersLink = document.getElementById("foldersLink");
+  if (foldersLink) foldersLink.href = `folder.html?uid=${uid}`;
+
+  // Sync button sirf apne profile pe dikhe
+  if (syncNameBtn) {
+    syncNameBtn.style.display = (me && me.uid === uid) ? "inline-block" : "none";
+  }
 
   let synced = 0, locals = 0;
   try {
@@ -136,6 +146,41 @@ editForm.onsubmit = async (e) => {
   editModal.classList.remove("show");
   loadProfile(me.uid);
 };
+
+// ---- Sync name on all old codes ----
+if (syncNameBtn) {
+  syncNameBtn.onclick = async () => {
+    if (!me) return;
+    const currentName = myProfile?.name || me.displayName || "";
+    if (!currentName) return alert("Pehle profile me naam set karo.");
+
+    syncNameBtn.disabled = true;
+    syncNameBtn.textContent = "Syncing...";
+
+    try {
+      const snap = await getDocs(query(
+        collection(db, "snippets"), where("authorId", "==", me.uid)
+      ));
+
+      if (snap.empty) {
+        alert("Tumhare koi code nahi hain abhi.");
+      } else {
+        const batch = writeBatch(db);
+        snap.docs.forEach(d => {
+          batch.update(doc(db, "snippets", d.id), { authorName: currentName });
+        });
+        await batch.commit();
+        alert(`✓ ${snap.size} code${snap.size > 1 ? "s" : ""} update ho gaye — ab sab pe "${currentName}" dikhega.`);
+        loadProfile(me.uid);
+      }
+    } catch (err) {
+      alert("Sync nahi ho paya: " + err.message);
+    }
+
+    syncNameBtn.disabled = false;
+    syncNameBtn.textContent = "🔄 Sync name on all codes";
+  };
+}
 
 function escapeHtml(str = "") {
   return str.replace(/[&<>"']/g, m => ({
